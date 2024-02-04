@@ -1,0 +1,14 @@
+dune:3:4
+sherrif:4:6
+rallyman:4:6
+smashup:3:4
+*
+Jason|	dune:4,	sherrif:2, rallyman:4, smashup:3
+Libby|	dune:3,	sherrif:2, rallyman:5, smashup:3
+Joel|	dune:5,	sherrif:2, rallyman:3, smashup:4
+Felix|	dune:1,	sherrif:4, rallyman:4, smashup:4
+Fred|	dune:2,	sherrif:3, rallyman:5, smashup:3
+David|	dune:2,	sherrif:4, rallyman:5, smashup:4
+Abbie|	dune:5,	sherrif:2, rallyman:4, smashup:3
+Adam|	dune:5,	sherrif:2, rallyman:4, smashup:2
+Kyle|	dune:3,	sherrif:1, rallyman:4, smashup:4

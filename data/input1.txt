@@ -1,0 +1,15 @@
+x:3:4
+PanAm:3:4
+sheriff:4:6
+*
+Felix|		sheriff:5,	x:1, 	PanAm:1
+Libby|		sheriff:4,	x:3, 	PanAm:2
+Adrienne|	sheriff:2,	x:3, 	PanAm:1
+Grace|		sheriff:5,	x:1, 	PanAm:3
+Colton|		sheriff:2,	x:4, 	PanAm:4
+Joel|		sheriff:3,	x:4, 	PanAm:5
+Jason|		sheriff:3,	x:3, 	PanAm:3
+Kyle|		sheriff:3,	x:4, 	PanAm:2
+Megan|		sheriff:5,	x:2, 	PanAm:5
+Adam|		sheriff:3,	x:5, 	PanAm:2
+Fred|		sheriff:4,	x:5, 	PanAm:1

@@ -1,0 +1,14 @@
+grid:3:6
+alice:3:5
+dominion:3:6
+catan:3:5
+*
+Kyle|	alice:5, dominion:3, grid:2, catan:1
+Megan|	alice:5, dominion:4, grid:3, catan:1
+Nathan|	alice:2, dominion:5, grid:4, catan:5
+Adrienne|alice:1, dominion:3, grid:3, catan:5
+Fred|	alice:4, dominion:3, grid:3, catan:1
+Abbie|	alice:2, dominion:4, grid:3, catan:5
+Jason|	alice:3, dominion:4, grid:5, catan:3
+Adam|	alice:1, dominion:3, grid:4, catan:4
+Joel|	alice:1, dominion:3, grid:5, catan:2

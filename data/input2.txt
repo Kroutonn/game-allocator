@@ -1,0 +1,11 @@
+dune:3:4
+PanAm:3:4
+sherrif:3:6
+*
+Felix|		dune:1,	PanAm:3, sherrif:4
+Libby|		dune:3,	PanAm:4, sherrif:2
+Colton|		dune:5,	PanAm:2, sherrif:2
+Joel|		dune:5,	PanAm:4, sherrif:2
+Jason|		dune:5,	PanAm:1, sherrif:1
+Megan|		dune:1,	PanAm:3, sherrif:4
+Fred|		dune:5,	PanAm:1, sherrif:3

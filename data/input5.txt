@@ -1,0 +1,19 @@
+dune:3:4
+rallyman:3:6
+dominion:3:5
+uprising:3:4
+dungeon:2:5
+*
+Nathan|	dune:5, rallyman:1, dominion:1, uprising:1, dungeon:1
+Adrienne|dune:1, rallyman:5, dominion:1, uprising:1, dungeon:1
+Felix|	dune:1, rallyman:1, dominion:5, uprising:1, dungeon:5
+Adam|	dune:4, rallyman:3, dominion:3, uprising:5, dungeon:2
+Joel|	dune:5, rallyman:1, dominion:2, uprising:4, dungeon:1
+Fred|	dune:4, rallyman:3, dominion:3, uprising:5, dungeon:3
+Kyle|	dune:5, rallyman:4, dominion:3, uprising:2, dungeon:4
+Jason|	dune:3, rallyman:2, dominion:2, uprising:5, dungeon:1
+Dexter|	dune:3, rallyman:3, dominion:3, uprising:3, dungeon:3
+Colton|	dune:5, rallyman:3, dominion:2, uprising:4, dungeon:1
+Grace|	dune:1, rallyman:3, dominion:5, uprising:1, dungeon:4
+Abbie|	dune:5, rallyman:1, dominion:2, uprising:3, dungeon:1
+Libby|	dune:5, rallyman:3, dominion:4, uprising:2, dungeon:2

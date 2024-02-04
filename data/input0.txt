@@ -1,0 +1,12 @@
+Betrayal:3:6
+Dune:3:4
+Mars:3:5
+PanAm:3:4
+*
+Joel|	Dune:5,		PanAm:4,	Betrayal:3,	Mars:1
+Jason|	Mars:5,		Dune:5,		PanAm:3,	Betrayal:2
+Adam|	Mars:5,		Dune:4,		Betrayal:2,	PanAm:1
+Kyle|	Betrayal:4,	PanAm:3,	Dune:2,		Mars:2
+Fred|	Betrayal:3,	Dune:3,		Mars:3,		PanAm:3
+Colton|	Dune:5:,	Mars:4,		Betrayal:3,	PanAm:2
+Megan|	PanAm:5,	Betrayal:4,	Dune:2,		Mars:1
