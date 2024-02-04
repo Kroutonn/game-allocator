@@ -1,8 +1,6 @@
 # game-allocator
 Takes in an assortment of board games, players, and their preference ratings to play each game and assigns groups to games.
 
-1. pip install -r dependencies.txt
-
 ## Use
 `pip install -r dependencies.txt`
 `python main.py -f filepath.txt`
