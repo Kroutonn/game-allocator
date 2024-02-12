@@ -3,3 +3,6 @@ pandas
 texttable
 argparse
 itertools
+flask
+flask-login
+flask-socketio

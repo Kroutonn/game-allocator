@@ -1,0 +1,88 @@
+{% extends 'base.html' %} {% block content %}
+<!-- Card -->
+<div class="mx-0 mx-sm-auto">
+  <section class="jumbotron text-center">
+    <div class="container">
+      <h4 class="jumbotron-heading">Room: {{roomcode}}</h4>
+      <p class="lead text-muted">
+        Please rate how much you'd like to play each of the following games with
+        1 meaning you don't want to play and 5 meaning you really want to play
+        that game.
+      </p>
+    </div>
+  </section>
+
+  <form method="post">
+    {% for game in games %}
+    <div class="text-center mb-3">
+      <div class="form-group text-center mb-3">
+        <div class="text-center">
+          <p>
+            <strong>{{game}}</strong>
+          </p>
+        </div>
+
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="{{game}}-inlineRadioOptions"
+            id="inlineRadio1"
+            value="1"
+            required=""
+          />
+          <label class="form-check-label" for="inlineRadio1">1</label>
+        </div>
+
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="{{game}}-inlineRadioOptions"
+            id="inlineRadio2"
+            value="2"
+          />
+          <label class="form-check-label" for="inlineRadio2">2</label>
+        </div>
+
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="{{game}}-inlineRadioOptions"
+            id="inlineRadio3"
+            value="3"
+          />
+          <label class="form-check-label" for="inlineRadio3">3</label>
+        </div>
+
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="{{game}}-inlineRadioOptions"
+            id="inlineRadio4"
+            value="4"
+          />
+          <label class="form-check-label" for="inlineRadio4">4</label>
+        </div>
+
+        <div class="form-check form-check-inline">
+          <input
+            class="form-check-input"
+            type="radio"
+            name="{{game}}-inlineRadioOptions"
+            id="inlineRadio5"
+            value="5"
+          />
+          <label class="form-check-label" for="inlineRadio5">5</label>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+    <div class="row justify-content-center">
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </div>
+  </form>
+</div>
+{% endblock %}

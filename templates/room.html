@@ -1,0 +1,47 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container-fluid">
+  <table class="table" id="preferenceTable">
+    <thead>
+      <tr>
+        <th scope="col">Room: {{room}}</th>
+        {% for game in games %}
+        <th scope="col">{{game}}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+  </table>
+  <button type="button" class="btn btn-secondary" data-dismiss="modal">
+    Assign Gamers!
+  </button>
+</div>
+
+<script type="text/javascript">
+  var socketio = io();
+
+  const tableRef = document.getElementById("preferenceTable");
+
+  const createRow = (name, scores) => {
+    headers = document.getElementsByTagName("th");
+    console.log("Headers: " + headers[1].innerHTML);
+    // Insert a row at the end of the table
+    let newRow = tableRef.insertRow(-1);
+    let newCell = newRow.insertCell(0);
+    let newText = document.createTextNode(name);
+    newCell.appendChild(newText);
+
+    // Insert a cell in the row at index 0
+    for (var i = 1; i < headers.length; i++) {
+      let columnName = headers[i].innerHTML;
+      newCell = newRow.insertCell(i);
+      newText = document.createTextNode(scores[columnName]);
+      newCell.appendChild(newText);
+    }
+    console.log("send");
+  };
+
+  socketio.on("message", (data) => {
+    console.log(data);
+    createRow(data.name, data.scores);
+  });
+</script>
+{% endblock %}

@@ -1,0 +1,119 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container">
+  <div class="py-5 text-center">
+    <h3>Board Game Allocator</h3>
+  </div>
+  <div class="row justify-content-center">
+    <form method="post" class="form-signin" autocomplete="off">
+      <label for="roomcode">
+        ROOM CODE
+        <!---->
+      </label>
+      <input
+        id="roomcode"
+        class="form-control"
+        type="text"
+        autocapitalize="none"
+        autocorrect="off"
+        autocomplete="off"
+        placeholder="ENTER 4-LETTER-CODE"
+        maxlength="4"
+        name="code"
+        value="{{code}}"
+      />
+      <!---->
+      <label for="username">NAME</label>
+      <input
+        id="username"
+        class="form-control"
+        type="text"
+        autocapitalize="none"
+        autocorrect="off"
+        autocomplete="off"
+        placeholder="ENTER YOUR NAME"
+        required=""
+        name="name"
+        value="{{name}}"
+        maxlength="12"
+      />
+      <br />
+      <button
+        class="btn btn-lg btn-primary btn-block"
+        type="submit"
+        name="join"
+      >
+        Join Game Night
+      </button>
+      <button
+        class="btn btn-lg btn-primary btn-block"
+        type="button"
+        data-toggle="modal"
+        data-target="#selectGamesModal"
+      >
+        Create Game Night
+      </button>
+
+      <!-- Modal -->
+      <div
+        class="modal fade"
+        id="selectGamesModal"
+        tabindex="-1"
+        role="dialog"
+        aria-labelledby="selectGamesModalTitle"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="selectGamesModalTitle">
+                Modal title
+              </h5>
+              <button
+                type="button"
+                class="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+            <div class="modal-body">
+              <div class="form-group">
+                <label for="exampleFormControlSelect2">Select Games</label>
+                <select
+                  multiple
+                  class="form-control"
+                  id="exampleFormControlSelect2"
+                  name="selectedGames"
+                >
+                  {% for game in games %}
+                  <option>{{game}}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                type="button"
+                class="btn btn-secondary"
+                data-dismiss="modal"
+              >
+                Close
+              </button>
+              <button type="submit" name="create" class="btn btn-primary">
+                Create Game Night
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% if error %}
+      <ul>
+        <li>{{error}}</li>
+      </ul>
+      {% endif %}
+    </form>
+    {% endblock %}
+  </div>
+</div>
