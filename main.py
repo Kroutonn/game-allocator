@@ -2,7 +2,9 @@ from flask import Flask, render_template, request, session, redirect, url_for
 from flask_socketio import join_room, leave_room, send, SocketIO
 from string import ascii_uppercase
 import random
-import json
+import csv
+
+games_map = {}
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "hjhjsdahhds"
@@ -57,7 +59,7 @@ def home():
 
         return redirect(url_for('input_preferences'))
 
-    return render_template("home.html", games = games)
+    return render_template("home.html", games = list(games_map.keys()))
 
 @app.route('/room')
 def room():
@@ -125,4 +127,13 @@ def generate_unique_code(length):
     return code
 
 if __name__ == "__main__":
+    with open('data/games.csv', newline='') as csvfile:
+        reader = csv.reader(csvfile)
+        for row in reader:
+            game = row[0]
+            minPlayer = row[1]
+            maxPlayer = row[2]
+
+            games_map[game] = {"min":minPlayer, "max":maxPlayer}
+
     socketio.run(app, host='0.0.0.0', debug=True)
