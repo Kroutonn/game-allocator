@@ -10,11 +10,15 @@
       </tr>
     </thead>
   </table>
-  <button type="button" class="btn btn-secondary" data-dismiss="modal">
-    Assign Gamers!
-  </button>
+  {% if isCreator %}
+  <button
+      class="btn btn-lg btn-primary btn-block"
+      type="submit"
+      id="assignBtn"
+    >Assign Gamers!</button>
+  {% endif %}
 </div>
-
+<div id="results"></div>
 <script type="text/javascript">
   var socketio = io();
 
@@ -39,9 +43,44 @@
     console.log("send");
   };
 
+  $(document).ready(function() {
+    // Attach a click event handler to a button with ID "myButton"
+    $("#assignBtn").on("click", function() {
+      // Code to be executed when the button is clicked
+      console.log("Assiging")
+      $("#results").empty();
+      const content = `
+      <div class="text" id="solution">
+          <span>
+              <strong>Calculating Results...</strong>
+          </span>
+      </div>
+      `;
+      $('#results').append(content);
+
+      socketio.emit("assign");
+    });
+
+  });
+
   socketio.on("message", (data) => {
     console.log(data);
     createRow(data.name, data.scores);
   });
-</script>
+
+  socketio.on("solution", (solution) => {
+    console.log("Solution")
+    $("#solution").empty()
+
+    $.each(solution, function(index, value) {
+      $('#solution').append(`
+      <span>
+        <strong>${index}: ${value.toString()}</strong>
+      </span>
+      <br />
+      `)
+    });
+  });
+
+  </script>
 {% endblock %}

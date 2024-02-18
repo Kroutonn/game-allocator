@@ -38,6 +38,29 @@ class Event():
                     player.preference_scores[game_to_rating[0].strip()] = int(game_to_rating[1])
                 self.players.append(player)
 
+    def from_room(self, room):
+        print("Loading event")
+        print("---------------------------------")
+        print(room)
+        print(room['preferences'])
+        print("------------------------------")
+        for game in room['games']:
+            g = Game()
+            g.name=game
+            g.min_players = 3
+            g.max_players = 5
+            self.games.append(g)
+
+        for k, v in room['preferences'].items():
+            player = Player()
+            player.name = k
+            player.preference_scores = v
+            self.players.append(player)
+
+        print(self.players)
+        print(self.games)
+
+
     def to_data_frame(self):
         game_names = []
         for game in self.games:

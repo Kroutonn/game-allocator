@@ -1,7 +1,9 @@
 from flask import Flask, render_template, request, session, redirect, url_for
-from flask_socketio import join_room, leave_room, send, SocketIO
+from flask_socketio import join_room, leave_room, send, SocketIO, emit
 from string import ascii_uppercase
 import random
+from classes import event
+from classes import allocatorUtil, solution
 import csv
 
 games_map = {}
@@ -22,7 +24,7 @@ def input_preferences():
 
     if request.method == "POST":
         for game in session['games']:
-            preferences[game] = request.form.get(f"{game}-inlineRadioOptions")
+            preferences[game] = int(request.form.get(f"{game}-inlineRadioOptions"))
 
         session['preferenceScores'] = preferences
         return redirect(url_for('room'))
@@ -36,6 +38,7 @@ def home():
     games.sort()
 
     if request.method == "POST":
+        session['isCreator'] = False
         name = request.form.get("name")
         code = request.form.get("code")
         join = request.form.get("join", False)
@@ -48,14 +51,14 @@ def home():
         # Determine if POST request is from join or create
         if create != False: # User pressed "create" button and selected games.
             room = generate_unique_code(4)
-            rooms[room] = {"members": 0, "games": selectedGames, 'preferences':[]}
+            rooms[room] = {"members": 0, "games": selectedGames, 'preferences':{}}
+            session['isCreator'] = True
         elif code not in rooms: # User attempts to join a room
             return render_template("home.html", error="Room does not exist", len = len(games), games = games, code=code, name=name)
 
         session['room'] = room
         session['name'] = name
         session['games'] = rooms[room]['games']
-        print(rooms[room]['games'])
 
         return redirect(url_for('input_preferences'))
 
@@ -64,9 +67,11 @@ def home():
 @app.route('/room')
 def room():
     room = session.get('room')
+    
+
     if room is None or session.get('name') is None or room not in rooms:
         return redirect(url_for('home'))
-    return render_template('room.html', name=session['name'], room=session['room'], games=session['games'], preferenceScores = session['preferenceScores'])
+    return render_template('room.html', name=session['name'], room=session['room'], games=session['games'], preferenceScores = session['preferenceScores'], isCreator = session['isCreator'])
 
 @socketio.on("connect")
 def connect(auth):
@@ -81,10 +86,10 @@ def connect(auth):
     
     join_room(room)
     data = {"name": name, "scores": session.get('preferenceScores')}
-    print(data)
+    print(f"{name} has joined the room {room}")
     send(data, to=room)
     rooms[room]["members"] += 1
-    print(f"{name} joined room {room}")
+    rooms[room]['preferences'][name] = session.get('preferenceScores')
 
 @socketio.on("disconnect")
 def disconnect():
@@ -98,8 +103,7 @@ def disconnect():
         if rooms[room]["members"] <= 0:
             del rooms[room]
 
-    #send({"name": name, "scores": "has left the room"}, to=room)
-    print(f"{name} has theft the room {room}")
+    print(f"{name} has left the room {room}")
 
 @socketio.on("message")
 def message(data):
@@ -111,9 +115,20 @@ def message(data):
         "name": session.get("name"),
         "scores": session.get("preferenceScores")
     }
-    #send(content, to=room)
+
     rooms[room]["messages"].append(content)
-    print(f"{session.get('name')} said: {data['data']}")
+
+@socketio.on("assign")
+def assign():
+    sol = solution.Solution()
+    myevent = event.Event()
+    room = session.get("room")
+    myevent.from_room(rooms[room])
+
+    solver = allocatorUtil.Solver(myevent)
+    sol = solver.check_all_combinations()
+    socketio.emit("solution", sol.assignments)
+    #socketio.emit("solution", {"Dune":["Colton","Joel","Adam"], "Star Realms":["Fred", "Jason", "Grace"]}, room=room)
 
 def generate_unique_code(length):
     while True:

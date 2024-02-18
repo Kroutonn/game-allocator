@@ -66,8 +66,16 @@ class Solver:
         # Objective
         # Goal is to minimize the preference scores for a game and meet the conditions detailed above. Lower preference rating means that person would prefer to play that game
         objective_terms = []
+        
         for player in self.scores_for_subset_df.index:
             for game in self.scores_for_subset_df.columns:
+                print(f"Player: {type(player)} Game: {type(game)}")
+                print(f"Decision Variabls type : {type(self.decision_variables)}")
+                print(f"DV Cell Cype: {type(self.decision_variables[player,game])}")
+                print(f"Subset Scores DF: {self.scores_for_subset_df}")
+                print(f"Subset Scores DF Type: {type(self.scores_for_subset_df)}")
+                print(f"Subset Scores DF Cell:{self.scores_for_subset_df.loc[player][game]}")
+                print(f"Subset Scores DF Cell Type:{type(self.scores_for_subset_df.loc[player][game])}")
                 objective_terms.append(self.decision_variables[player, game] * self.scores_for_subset_df.loc[player][game])
         
         self.cp_solver.Maximize(self.cp_solver.Sum(objective_terms))
@@ -101,6 +109,7 @@ class Solver:
         # ran in to some issues with particular problem sets when trying determining game_subset_size by players/avg_min_player_count, so adding +/- 1 to that to provide a little
         # wiggle room. Probably a better way to dynamically handle how many games are needed, but this works.
         game_combos = []
+        print(game_combos)
         game_combos.extend(combinations(self.event.get_game_names(), self.game_subset_size))
         game_combos.extend(combinations(self.event.get_game_names(), self.game_subset_size - 1))
         game_combos.extend(combinations(self.event.get_game_names(), self.game_subset_size + 1))
@@ -112,7 +121,9 @@ class Solver:
              self._solve_problem()
 
         if self.best_solution.total_score > 0:
-            self.print_solution()
+            #self.print_solution()
+            print(self.best_solution)
+            return self.best_solution
         else:
             print("No solution found, hopefully it's not an error in the code somewhere along the way. Good luck finding that!")
 
