@@ -118,12 +118,12 @@ def assign():
     myevent.from_room(rooms[room])
 
     # Comment out the next 3 lines when testing. Makes life a lot easier not having to connect multiple sessions
-    #solver = allocatorUtil.Solver(myevent)
-    #sol = solver.check_all_combinations()
-    #socketio.emit("solution", sol.assignments, to=room)
+    solver = allocatorUtil.Solver(myevent)
+    sol = solver.check_all_combinations()
+    socketio.emit("solution", sol.assignments, to=room)
 
     # Uncomment when testing.
-    socketio.emit("solution", {"Dune":["Colton","Joel","Adam"], "Star Realms":["Fred", "Jason", "Grace"]}, to=room)
+    #socketio.emit("solution", {"Dune":["Colton","Joel","Adam"], "Star Realms":["Fred", "Jason", "Grace"]}, to=room)
 
 def generate_unique_code(length):
     while True:
@@ -146,4 +146,4 @@ if __name__ == "__main__":
 
             games_map[game] = {"min":minPlayer, "max":maxPlayer}
 
-    socketio.run(app, host='0.0.0.0', port='443', debug=True)
+    socketio.run(app, host='0.0.0.0', debug=True)
