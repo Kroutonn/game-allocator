@@ -1,8 +1,5 @@
-ortools
-pandas
-texttable
-argparse
-itertools
 flask
-flask-login
-flask-socketio
+flask_socketio
+pandas
+ortools
+texttable

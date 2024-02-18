@@ -20,7 +20,9 @@
     >Assign Gamers!</button>
   {% endif %}
 </div>
-<div id="results"></div>
+<div id="results">
+  <div class="text" id="solution"></div>
+</div>
 <script type="text/javascript">
   var socketio = io();
 
@@ -54,15 +56,13 @@
     $("#assignBtn").on("click", function() {
       // Code to be executed when the button is clicked
       console.log("Assiging")
-      $("#results").empty();
+      $("#solution").empty();
       const content = `
-      <div class="text" id="solution">
-          <span>
-              <strong>Calculating Results...</strong>
-          </span>
-      </div>
+        <span>
+          <strong>Calculating Results...</strong>
+        </span>
       `;
-      $('#results').append(content);
+      $('#solution').append(content);
 
       socketio.emit("assign");
     });
