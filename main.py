@@ -85,22 +85,27 @@ def connect(auth):
         return
     
     join_room(room)
-    data = {"name": name, "scores": session.get('preferenceScores')}
     print(f"{name} has joined the room {room}")
-    send(data, to=room)
     rooms[room]["members"] += 1
     rooms[room]['preferences'][name] = session.get('preferenceScores')
+
+    socketio.emit("updateRoom", rooms[room]["preferences"], to=room)
 
 @socketio.on("disconnect")
 def disconnect():
     room = session.get("room")
     name = session.get("name")
+
+    # Remove the user and their preferences from the room
+    rooms[room]["preferences"].pop(name)
+    socketio.emit("updateRoom", rooms[room]["preferences"], to=room)
     leave_room(room)
 
     # If the last person has leaves, delete the room
     if room in rooms:
         rooms[room]["members"] -= 1
         if rooms[room]["members"] <= 0:
+            print(f"{room} has been deleted")
             del rooms[room]
 
     print(f"{name} has left the room {room}")
@@ -125,10 +130,13 @@ def assign():
     room = session.get("room")
     myevent.from_room(rooms[room])
 
+    # Comment out the next 3 lines when testing. Makes life a lot easier not having to connect multiple sessions
     solver = allocatorUtil.Solver(myevent)
     sol = solver.check_all_combinations()
-    socketio.emit("solution", sol.assignments)
-    #socketio.emit("solution", {"Dune":["Colton","Joel","Adam"], "Star Realms":["Fred", "Jason", "Grace"]}, room=room)
+    socketio.emit("solution", sol.assignments, to=room)
+
+    # Uncomment when testing.
+    #socketio.emit("solution", {"Dune":["Colton","Joel","Adam"], "Star Realms":["Fred", "Jason", "Grace"]}, to=room)
 
 def generate_unique_code(length):
     while True:

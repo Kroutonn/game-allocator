@@ -9,6 +9,8 @@
         {% endfor %}
       </tr>
     </thead>
+    <tbody class="table" id="tableBody">
+    </tbody>
   </table>
   {% if isCreator %}
   <button
@@ -22,27 +24,31 @@
 <script type="text/javascript">
   var socketio = io();
 
-  const tableRef = document.getElementById("preferenceTable");
+  const tableRef = document.getElementById("preferenceTable").getElementsByTagName('tbody')[0];
 
-  const createRow = (name, scores) => {
+  // Given a rooms preference data, update the table with the latest scores
+  //  -> {player:{g1:s1, g2:s2}}
+  socketio.on("updateRoom", (preferences) => {
+    $("#tableBody").empty()
     headers = document.getElementsByTagName("th");
-    console.log("Headers: " + headers[1].innerHTML);
-    // Insert a row at the end of the table
-    let newRow = tableRef.insertRow(-1);
-    let newCell = newRow.insertCell(0);
-    let newText = document.createTextNode(name);
-    newCell.appendChild(newText);
-
-    // Insert a cell in the row at index 0
-    for (var i = 1; i < headers.length; i++) {
-      let columnName = headers[i].innerHTML;
-      newCell = newRow.insertCell(i);
-      newText = document.createTextNode(scores[columnName]);
+    $.each(preferences, function(name, scores) {
+      // Insert a row at the end of the table
+      let newRow = tableRef.insertRow(-1);
+      let newCell = newRow.insertCell(0);
+      let newText = document.createTextNode(name);
       newCell.appendChild(newText);
-    }
-    console.log("send");
-  };
 
+      // Insert a cell in the row at index 0
+      for (var i = 1; i < headers.length; i++) {
+        let columnName = headers[i].innerHTML;
+        newCell = newRow.insertCell(i);
+        newText = document.createTextNode(scores[columnName]);
+        newCell.appendChild(newText);
+      }
+    });
+  });
+
+  // Button handler to assign players to games
   $(document).ready(function() {
     // Attach a click event handler to a button with ID "myButton"
     $("#assignBtn").on("click", function() {
@@ -63,11 +69,7 @@
 
   });
 
-  socketio.on("message", (data) => {
-    console.log(data);
-    createRow(data.name, data.scores);
-  });
-
+  // Receiver the player to game assignments from the server and output the results.
   socketio.on("solution", (solution) => {
     console.log("Solution")
     $("#solution").empty()
