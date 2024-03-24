@@ -38,17 +38,12 @@ class Event():
                     player.preference_scores[game_to_rating[0].strip()] = int(game_to_rating[1])
                 self.players.append(player)
 
-    def from_room(self, room):
-        print("Loading event")
-        print("---------------------------------")
-        print(room)
-        print(room['preferences'])
-        print("------------------------------")
+    def from_room(self, room, gamesMap):
         for game in room['games']:
             g = Game()
             g.name=game
-            g.min_players = 3
-            g.max_players = 5
+            g.min_players = int(gamesMap[game]["min"])
+            g.max_players = int(gamesMap[game]["max"])
             self.games.append(g)
 
         for k, v in room['preferences'].items():
@@ -56,9 +51,6 @@ class Event():
             player.name = k
             player.preference_scores = v
             self.players.append(player)
-
-        print(self.players)
-        print(self.games)
 
 
     def to_data_frame(self):

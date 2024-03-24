@@ -5,6 +5,7 @@ import random
 from classes import event
 from classes import allocatorUtil, solution
 import csv
+from datetime import datetime
 
 games_map = {}
 
@@ -115,15 +116,22 @@ def assign():
     sol = solution.Solution()
     myevent = event.Event()
     room = session.get("room")
-    myevent.from_room(rooms[room])
+    myevent.from_room(rooms[room], games_map)
 
-    # Comment out the next 3 lines when testing. Makes life a lot easier not having to connect multiple sessions
     solver = allocatorUtil.Solver(myevent)
     sol = solver.check_all_combinations()
     socketio.emit("solution", sol.assignments, to=room)
 
-    # Uncomment when testing.
-    #socketio.emit("solution", {"Dune":["Colton","Joel","Adam"], "Star Realms":["Fred", "Jason", "Grace"]}, to=room)
+    # Log the inputs and assignments to a file because who doesn't like data 
+    date = datetime.now().strftime('%Y%m%d')
+    logfile = open(f'logs/assignments_{date}.txt', "a")
+    logfile.write('\n----------Inputs-----------\n')
+    logfile.write(myevent.to_data_frame().to_string())
+    logfile.write('\n----------Results----------\n')
+    for game, players in sol.assignments.items():
+        logfile.write(f'{game}: ' + ', '.join(str(i) for i in players) + '\n') 
+    logfile.write('---------------------------\n')
+    logfile.close()
 
 def generate_unique_code(length):
     while True:
