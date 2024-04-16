@@ -92,6 +92,8 @@ def connect(auth):
 
     socketio.emit("updateRoom", rooms[room]["preferences"], to=room)
 
+# Commented out to fix issue with people dropping out when not actively on the site
+"""
 @socketio.on("disconnect")
 def disconnect():
     room = session.get("room")
@@ -110,7 +112,7 @@ def disconnect():
             del rooms[room]
 
     print(f"{name} has left the room {room}")
-
+"""
 @socketio.on("assign")
 def assign():
     sol = solution.Solution()
@@ -119,8 +121,15 @@ def assign():
     myevent.from_room(rooms[room], games_map)
 
     solver = allocatorUtil.Solver(myevent)
-    sol = solver.check_all_combinations()
-    socketio.emit("solution", sol.assignments, to=room)
+    try:
+        sol = solver.check_all_combinations()
+        socketio.emit("solution", sol.assignments, to=room)
+    except:
+        print("No solution found")
+        # Probably a better way to emit errors, but this an easy way to add it in.
+        sol.add_assignment("Error","No Combinations found for some reason. Sad Panda :(")
+        socketio.emit("solution",sol.assignments)
+
 
     # Log the inputs and assignments to a file because who doesn't like data 
     date = datetime.now().strftime('%Y%m%d')

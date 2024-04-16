@@ -116,6 +116,7 @@ class Solver:
             self.best_solution
             return self.best_solution
         else:
+            raise Exception("No solution found, hopefully it's not an error in the code somewhere along the way. Good luck finding that!")
             print("No solution found, hopefully it's not an error in the code somewhere along the way. Good luck finding that!")
 
     def print_solution(self):
