@@ -1,4 +1,3 @@
-
 #Internal Imports
 from classes.game import Game
 from classes.player import Player
@@ -38,13 +37,9 @@ class Event():
                     player.preference_scores[game_to_rating[0].strip()] = int(game_to_rating[1])
                 self.players.append(player)
 
-    def from_room(self, room, gamesMap):
+    def from_room(self, room):
         for game in room['games']:
-            g = Game()
-            g.name=game
-            g.min_players = int(gamesMap[game]["min"])
-            g.max_players = int(gamesMap[game]["max"])
-            self.games.append(g)
+            self.games.append(Game.query.filter_by(name=game).first())
 
         for k, v in room['preferences'].items():
             player = Player()
