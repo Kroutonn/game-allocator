@@ -1,19 +1,17 @@
-from flask import Flask, render_template, request, session, redirect, url_for
-from flask_socketio import join_room, leave_room, send, SocketIO, emit
+from flask import Flask, render_template, request, session, redirect, url_for, flash
+from flask_socketio import join_room, leave_room, SocketIO
 from string import ascii_uppercase
 import random
 from classes import event
 from classes import allocatorUtil, solution
-import csv
-from datetime import datetime
-
-games_map = {}
+from classes.game import db, Game
 
 app = Flask(__name__)
 app.config["SECRET_KEY"] = "hjhjsdahhds"
 app.config['host'] = '0.0.0.0'
+app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///games.db"
 socketio = SocketIO(app)
-
+db.init_app(app)
 rooms = {}
 
 @app.route('/input-preferences', methods=["POST", "GET"])
@@ -62,8 +60,8 @@ def home():
         session['games'] = rooms[room]['games']
 
         return redirect(url_for('input_preferences'))
-
-    return render_template("home.html", games = list(games_map.keys()))
+    result = [r[0] for r in Game.query.with_entities(Game.name).all()]
+    return render_template("home.html", games = result)
 
 @app.route('/room')
 def room():
@@ -73,6 +71,46 @@ def room():
     if room is None or session.get('name') is None or room not in rooms:
         return redirect(url_for('home'))
     return render_template('room.html', name=session['name'], room=session['room'], games=session['games'], preferenceScores = session['preferenceScores'], isCreator = session['isCreator'])
+
+@app.route('/games', methods=['GET', 'POST'])
+def show_all():
+    if request.method == 'POST':
+        if not request.form['name'] or not request.form['minPlayers'] or not request.form['maxPlayers']:
+            flash('Please enter all the fields', 'error')
+        else:
+            game = Game()
+            game.name = request.form['name']
+            game.min_players = request.form['minPlayers']
+            game.max_players = request.form['maxPlayers']
+            
+            # Insert new or update existing entry by checking DB to see if entry exists first
+            existing_game = Game.query.filter_by(name=game.name).first()
+            if existing_game is None:
+                # Add new entry
+                db.session.add(game)
+                db.session.commit()
+                flash(f'{game.name} Has been succefully added.')
+            else:
+                # Update existing entry with new fields
+                existing_game.name = game.name
+                existing_game.min_players = game.min_players
+                existing_game.max_players = game.max_players
+                db.session.commit()
+                flash(f'{game.name} Has been succefully Updated.')
+            
+            return render_template('show_all.html', games=Game.query.order_by(Game.name).all())
+
+    return render_template('show_all.html', games=Game.query.order_by(Game.name).all())
+
+@app.route('/delete/<name>')
+def delete(name):
+    game_to_delete = Game.query.get_or_404(name)
+    try:
+        db.session.delete(game_to_delete)
+        db.session.commit()
+        return redirect(url_for("show_all"))
+    except:
+        print(f"\nError deleting game: {game_to_delete}")
 
 @socketio.on("connect")
 def connect(auth):
@@ -92,7 +130,6 @@ def connect(auth):
 
     socketio.emit("updateRoom", rooms[room]["preferences"], to=room)
 
-# Commented out to fix issue with people dropping out when not actively on the site
 """
 @socketio.on("disconnect")
 def disconnect():
@@ -118,29 +155,15 @@ def assign():
     sol = solution.Solution()
     myevent = event.Event()
     room = session.get("room")
-    myevent.from_room(rooms[room], games_map)
+    myevent.from_room(rooms[room])
 
+    # Comment out the next 3 lines when testing. Makes life a lot easier not having to connect multiple sessions
     solver = allocatorUtil.Solver(myevent)
-    try:
-        sol = solver.check_all_combinations()
-        socketio.emit("solution", sol.assignments, to=room)
-    except:
-        print("No solution found")
-        # Probably a better way to emit errors, but this an easy way to add it in.
-        sol.add_assignment("Error","No Combinations found for some reason. Sad Panda :(")
-        socketio.emit("solution",sol.assignments)
+    sol = solver.check_all_combinations()
+    socketio.emit("solution", sol.assignments, to=room)
 
-
-    # Log the inputs and assignments to a file because who doesn't like data 
-    date = datetime.now().strftime('%Y%m%d')
-    logfile = open(f'logs/assignments_{date}.txt', "a")
-    logfile.write('\n----------Inputs-----------\n')
-    logfile.write(myevent.to_data_frame().to_string())
-    logfile.write('\n----------Results----------\n')
-    for game, players in sol.assignments.items():
-        logfile.write(f'{game}: ' + ', '.join(str(i) for i in players) + '\n') 
-    logfile.write('---------------------------\n')
-    logfile.close()
+    # Uncomment when testing.
+    #socketio.emit("solution", {"Dune":["Colton","Joel","Adam"], "Star Realms":["Fred", "Jason", "Grace"]}, to=room)
 
 def generate_unique_code(length):
     while True:
@@ -154,13 +177,6 @@ def generate_unique_code(length):
     return code
 
 if __name__ == "__main__":
-    with open('data/games.csv', newline='') as csvfile:
-        reader = csv.reader(csvfile)
-        for row in reader:
-            game = row[0]
-            minPlayer = row[1]
-            maxPlayer = row[2]
-
-            games_map[game] = {"min":minPlayer, "max":maxPlayer}
-
+    with app.app_context():
+        db.create_all()
     socketio.run(app, host='0.0.0.0', debug=True)

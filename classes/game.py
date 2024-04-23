@@ -1,4 +1,12 @@
-class Game():
+from flask_sqlalchemy import SQLAlchemy
+
+db = SQLAlchemy()
+
+class Game(db.Model):
+    name = db.Column(db.String(50), primary_key=True)
+    min_players = db.Column(db.Integer())
+    max_players = db.Column(db.Integer())
+
     def __init__(self):
         self.name = ""
         self.min_players = 0
