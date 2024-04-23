@@ -75,18 +75,5 @@
         <span class="text-muted">A board game allocator by Colton</span>
       </div>
     </footer>
-
-    {% block javascript %}
-    <script type="text/javascript">
-      function deleteGame(gameName) {
-        fetch("/delete-game", {
-          method: "POST",
-          body: JSON.stringify({ gameName: gameName }),
-        }).then((_res) => {
-          window.location.href = "/";
-        });
-      }
-    </script>
-    {% endblock %}
   </body>
 </html>
