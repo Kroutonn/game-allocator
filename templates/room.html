@@ -1,0 +1,88 @@
+{% extends 'base.html' %} {% block content %}
+<div class="container-fluid">
+  <table class="table" id="preferenceTable">
+    <thead>
+      <tr>
+        <th scope="col">Room: {{room}}</th>
+        {% for game in games %}
+        <th scope="col">{{game}}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody class="table" id="tableBody">
+    </tbody>
+  </table>
+  {% if isCreator %}
+  <button
+      class="btn btn-lg btn-primary btn-block"
+      type="submit"
+      id="assignBtn"
+    >Assign Gamers!</button>
+  {% endif %}
+</div>
+<div id="results">
+  <div class="text" id="solution"></div>
+</div>
+<script type="text/javascript">
+  var socketio = io();
+
+  const tableRef = document.getElementById("preferenceTable").getElementsByTagName('tbody')[0];
+
+  // Given a rooms preference data, update the table with the latest scores
+  //  -> {player:{g1:s1, g2:s2}}
+  socketio.on("updateRoom", (preferences) => {
+    $("#tableBody").empty()
+    headers = document.getElementsByTagName("th");
+    $.each(preferences, function(name, scores) {
+      // Insert a row at the end of the table
+      let newRow = tableRef.insertRow(-1);
+      let newCell = newRow.insertCell(0);
+      let newText = document.createTextNode(name);
+      newCell.appendChild(newText);
+
+      // Insert a cell in the row at index 0
+      for (var i = 1; i < headers.length; i++) {
+        let columnName = headers[i].innerHTML;
+        newCell = newRow.insertCell(i);
+        newText = document.createTextNode(scores[columnName]);
+        newCell.appendChild(newText);
+      }
+    });
+  });
+
+  // Button handler to assign players to games
+  $(document).ready(function() {
+    // Attach a click event handler to a button with ID "myButton"
+    $("#assignBtn").on("click", function() {
+      // Code to be executed when the button is clicked
+      console.log("Assiging")
+      $("#solution").empty();
+      const content = `
+        <span>
+          <strong>Calculating Results...</strong>
+        </span>
+      `;
+      $('#solution').append(content);
+
+      socketio.emit("assign");
+    });
+
+  });
+
+  // Receiver the player to game assignments from the server and output the results.
+  socketio.on("solution", (solution) => {
+    console.log("Solution")
+    $("#solution").empty()
+
+    $.each(solution, function(index, value) {
+      $('#solution').append(`
+      <span>
+        <strong>${index}: ${value.toString()}</strong>
+      </span>
+      <br />
+      `)
+    });
+  });
+
+  </script>
+{% endblock %}

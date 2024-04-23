@@ -1,4 +1,3 @@
-
 #Internal Imports
 from classes.game import Game
 from classes.player import Player
@@ -37,6 +36,17 @@ class Event():
                     game_to_rating = game_rating.split(":")
                     player.preference_scores[game_to_rating[0].strip()] = int(game_to_rating[1])
                 self.players.append(player)
+
+    def from_room(self, room):
+        for game in room['games']:
+            self.games.append(Game.query.filter_by(name=game).first())
+
+        for k, v in room['preferences'].items():
+            player = Player()
+            player.name = k
+            player.preference_scores = v
+            self.players.append(player)
+
 
     def to_data_frame(self):
         game_names = []

@@ -66,6 +66,7 @@ class Solver:
         # Objective
         # Goal is to minimize the preference scores for a game and meet the conditions detailed above. Lower preference rating means that person would prefer to play that game
         objective_terms = []
+        
         for player in self.scores_for_subset_df.index:
             for game in self.scores_for_subset_df.columns:
                 objective_terms.append(self.decision_variables[player, game] * self.scores_for_subset_df.loc[player][game])
@@ -112,8 +113,10 @@ class Solver:
              self._solve_problem()
 
         if self.best_solution.total_score > 0:
-            self.print_solution()
+            self.best_solution
+            return self.best_solution
         else:
+            raise Exception("No solution found, hopefully it's not an error in the code somewhere along the way. Good luck finding that!")
             print("No solution found, hopefully it's not an error in the code somewhere along the way. Good luck finding that!")
 
     def print_solution(self):
@@ -121,7 +124,6 @@ class Solver:
         table = texttable.Texttable()
         table.add_row(['Total Score', 'Total Time', 'Total Iterations'])
         table.add_row([str(self.best_solution.total_score), str(self.total_time), str(self.total_iterations)])
-        print(table.draw())
 
         print('\n')
         print('Results:')
